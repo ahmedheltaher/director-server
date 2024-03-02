@@ -4,19 +4,15 @@ import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface DeviceAttributes {
 	id: string;
-	namespace: string;
-	primaryECUId: string;
+	name: string;
 }
-export interface LibrarianInput
+export interface DeviceInput
 	extends Optional<DeviceAttributes, 'id'>,
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
-export class Device extends Model<DeviceAttributes, LibrarianInput> implements DeviceAttributes {
+export class Device extends Model<DeviceAttributes, DeviceInput> implements DeviceAttributes {
 	declare id: string;
-	declare namespace: string;
-	declare primaryECUId: string;
-
-
+	declare name: string;
 
 	toJSON() {
 		return this.jsonSerializer.toJSON({ modelInstance: this.dataValues, keysToDelete: ['createdAt', 'updatedAt'] });
@@ -28,8 +24,7 @@ export class Device extends Model<DeviceAttributes, LibrarianInput> implements D
 Device.init(
 	{
 		id: FieldFactory.UUId().Build(),
-		namespace: FieldFactory.String().NotNull().Build(),
-		primaryECUId: FieldFactory.String().NotNull().Unique().Build(),
+		name: FieldFactory.String().NotNull().Build(),
 	},
 	{
 		...FieldFactory.BasicModelConfig({
@@ -40,4 +35,3 @@ Device.init(
 		indexes: [{ unique: true, fields: [{ name: 'id' }] }],
 	}
 );
-// TODO: Add ref Reference

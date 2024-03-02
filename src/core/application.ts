@@ -4,7 +4,7 @@ import fastify, { FastifyInstance } from 'fastify';
 import { OpenAPIV2 } from 'openapi-types';
 import { ApiDefinitions, routes } from '../api';
 import { GetHooks } from '../api/hooks';
-import { RedisSingleton, SequelizeSingleton, seed } from '../database/server';
+import { RedisSingleton, SequelizeSingleton } from '../database/server';
 import { GetServices } from '../services';
 import { rateLimitPlugin } from './extensions';
 import { configurations, errorHandler, loggers, swaggerOptions, swaggerUIOptions } from './utils';
@@ -82,7 +82,7 @@ export class Application {
 
 		//Listen to all routes to discourage brute force attacks and provide a warm welcome message.
 		this._instance.all('*', async (request, reply) => {
-			reply.code(200).send({ message: 'Welcome to Baddil API!' });
+			reply.code(200).send({ message: 'Welcome to Director Server API!' });
 		});
 
 		this._instance.addHook('onRequest', async (request, reply) => {
@@ -112,7 +112,7 @@ export class Application {
 	 */
 	public async initialize(): Promise<void> {
 		await SequelizeSingleton.getInstance().sync();
-		await seed('./seed.json');
+		// await seed('./seed.json');
 		await this.init({ ...definitions, ...ApiDefinitions });
 	}
 

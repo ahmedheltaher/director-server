@@ -1,7 +1,7 @@
-import { Admin, LibrarianInput } from '../models';
+import { Admin, AdminInput } from '../models';
 import { BaseRepository } from './base';
 
-export class AdminRepository extends BaseRepository<Admin, LibrarianInput> {
+export class AdminRepository extends BaseRepository<Admin, AdminInput> {
 	constructor() {
 		super(Admin);
 	}

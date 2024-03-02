@@ -9,6 +9,6 @@ export const swaggerUIOptions: FastifySwaggerUiOptions = {
 		defaultModelExpandDepth: 10,
 	},
 	theme: {
-		title: 'library-management-system-api',
+		title: 'director-server-api',
 	},
 };

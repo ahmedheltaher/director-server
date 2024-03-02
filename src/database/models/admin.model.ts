@@ -11,11 +11,11 @@ interface AdminAttributes {
 	email: string;
 	isSuperAdmin: boolean;
 }
-export interface LibrarianInput
+export interface AdminInput
 	extends Optional<AdminAttributes, 'id'>,
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
-export class Admin extends Model<AdminAttributes, LibrarianInput> implements AdminAttributes {
+export class Admin extends Model<AdminAttributes, AdminInput> implements AdminAttributes {
 	declare id: string;
 	declare name: string;
 	declare password: string;

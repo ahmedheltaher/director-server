@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises';
-import { AdminRepository, BookRepository, BorrowerRepository } from '../';
+import { AdminRepository } from '../';
 import { loggers } from '../../core';
 
 const seedLogger = loggers.database.child({ module: 'seeder' });
@@ -10,9 +10,7 @@ const seedLogger = loggers.database.child({ module: 'seeder' });
  * @returns {Promise<void>} - A promise that resolves once the seeding is complete.
  */
 export async function seed(filePath: string): Promise<void> {
-	const bookRepository = new BookRepository();
 	const adminRepository = new AdminRepository();
-	const borrowerRepository = new BorrowerRepository();
 
 	try {
 
