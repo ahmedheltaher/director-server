@@ -27,8 +27,8 @@ ECUKey.init(
 	{
 		id: FieldFactory.UUId().Build(),
 		ecuId: FieldFactory.String().NotNull().References({ model: 'ecus', key: 'id' }).Build(),
-		publicKey: FieldFactory.String().NotNull().Build(),
-		privateKey: FieldFactory.String().NotNull().Build(),
+		publicKey: FieldFactory.Text().NotNull().Build(),
+		privateKey: FieldFactory.Text().NotNull().Build(),
 	},
 	{
 		...FieldFactory.BasicModelConfig({

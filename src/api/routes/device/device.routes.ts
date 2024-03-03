@@ -11,7 +11,7 @@ function PaginatedQuery(query: PaginatedQuery) {
 }
 
 async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {
-	const { deviceService } = services;
+	const { ecuService } = services;
 	return [
 		{
 			url: '/:deviceId/ecu',
@@ -21,7 +21,7 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 			handler: async ({ body, params }: HandlerParameter<{ body: TAddECU; params: TDeviceIDQuery }>) => {
 				const { deviceId } = params;
 				const { isPrimary, name, hardwareIdentifier, serialNumber } = body;
-				const ecu = await deviceService.addEcu({
+				const ecu = await ecuService.add({
 					deviceId,
 					isPrimary,
 					name,
@@ -38,7 +38,7 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 			// preHandler: [ hooks.adminsOnly],
 			handler: async ({ params }: HandlerParameter<{ params: { deviceId: string; ecuId: string } }>) => {
 				const { deviceId, ecuId } = params;
-				const result = await deviceService.deleteEcu(deviceId, ecuId);
+				const result = await ecuService.delete(deviceId, ecuId);
 				return { status: true, data: { result } };
 			},
 		},
@@ -53,7 +53,7 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 			}: HandlerParameter<{ body: TUpdateECU; params: { deviceId: string; ecuId: string } }>) => {
 				const { deviceId, ecuId } = params;
 				const { isPrimary, name, hardwareIdentifier, serialNumber } = body;
-				const ecu = await deviceService.updateEcu(deviceId, ecuId, {
+				const ecu = await ecuService.update(deviceId, ecuId, {
 					isPrimary,
 					name,
 					hardwareIdentifier,
@@ -69,7 +69,7 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 			// preHandler: [ hooks.adminsOnly],
 			handler: async ({ params }: HandlerParameter<{ params: { deviceId: string; ecuId: string } }>) => {
 				const { deviceId, ecuId } = params;
-				const ecu = await deviceService.getEcu(deviceId, ecuId);
+				const ecu = await ecuService.getEcu(deviceId, ecuId);
 				return { status: true, data: { ecu } };
 			},
 		},
@@ -80,10 +80,38 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 			// preHandler: [ hooks.adminsOnly],
 			handler: async ({ params }: HandlerParameter<{ params: TDeviceIDQuery }>) => {
 				const { deviceId } = params;
-				const ecus = await deviceService.getEcus(deviceId);
+				const ecus = await ecuService.getEcus(deviceId);
 				return { status: true, data: { ecus } };
 			},
 		},
+		{
+			url: '/:deviceId/ecu/:ecuId/generate-key',
+			method: 'POST',
+			schema: DeviceSchemas.GenerateECUKey,
+			// preHandler: [ hooks.adminsOnly],
+			handler: async ({ params }: HandlerParameter<{ params: { deviceId: string; ecuId: string } }>) => {
+				const { deviceId, ecuId } = params;
+				const { status } = await ecuService.generateKey(deviceId, ecuId);
+				if (!status) {
+					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
+				}
+				return { status: true, data: { message: 'Key generated successfully' } };
+			},
+		},
+		{
+			url: '/:deviceId/ecu/:ecuId/revoke-key',
+			method: 'POST',
+			schema: DeviceSchemas.RevokeECUKey,
+			// preHandler: [ hooks.adminsOnly],
+			handler: async ({ params }: HandlerParameter<{ params: { deviceId: string; ecuId: string } }>) => {
+				const { deviceId, ecuId } = params;
+				const { status } = await ecuService.revokeKey(deviceId, ecuId);
+				if (!status) {
+					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
+				}
+				return { status: true, data: { message: 'Key revoked successfully' } };
+			},
+		}
 	];
 }
 
@@ -98,7 +126,7 @@ export async function DeviceApiBuilder(options: ApiBuilderInput): Promise<ApiBui
 			schema: DeviceSchemas.GetAllDevices,
 			// preHandler: [hooks.adminsRequired],
 			handler: async ({ query }: HandlerParameter<{ query: PaginatedQuery }>) => {
-				const {limit, offset} = PaginatedQuery(query);
+				const { limit, offset } = PaginatedQuery(query);
 				const devices = await deviceService.getAll({ limit, offset });
 				return { status: true, data: { devices } };
 			},

@@ -173,6 +173,40 @@ export const DeviceSchemas = EntitySchema({
 			errors: ['401'],
 		}),
 	},
+	GenerateECUKey: {
+		summary: 'Generate a new ECU key',
+		description:
+			'This endpoint generates a new ECU key for a specific ECU in the system based on its unique identifier.',
+		tags: ['Device'],
+		params: {
+			type: 'object',
+			properties: {
+				...DevicesDefinitions.ECUIdInput.properties,
+				...DevicesDefinitions.DeviceIdInput.properties,
+			},
+			required: ['deviceId', 'ecuId'],
+			additionalProperties: false,
+		},
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
+	},
+	RevokeECUKey: {
+		summary: 'Revoke an ECU key',
+		description:
+			'This endpoint revokes an ECU key for a specific ECU in the system based on its unique identifier.',
+		tags: ['Device'],
+		params: {
+			type: 'object',
+			properties: {
+				...DevicesDefinitions.ECUIdInput.properties,
+				...DevicesDefinitions.DeviceIdInput.properties,
+			},
+			required: ['deviceId', 'ecuId'],
+			additionalProperties: false,
+		},
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
+	},
 	AddDevice: {
 		summary: 'Add a new device to the system.',
 		description: 'this endpoint adds a new device to the system.',
