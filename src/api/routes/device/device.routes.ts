@@ -111,7 +111,21 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 				}
 				return { status: true, data: { message: 'Key revoked successfully' } };
 			},
-		}
+		},
+		{
+			url: '/:deviceId/ecu/:ecuId/export-key',
+			method: 'POST',
+			schema: DeviceSchemas.ExportECUKey,
+			// preHandler: [ hooks.adminsOnly],
+			handler: async ({ params }: HandlerParameter<{ params: { deviceId: string; ecuId: string } }>) => {
+				const { deviceId, ecuId } = params;
+				const { status, data } = await ecuService.exportKey(deviceId, ecuId);
+				if (!status) {
+					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
+				}
+				return { status: true, data: { key: data?.publicKey } };
+			},
+		},
 	];
 }
 

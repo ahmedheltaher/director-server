@@ -60,9 +60,17 @@ export class ECUService {
 		const ecu = await this.ecuRepository.findOne({ where: { id: ecuId, deviceId } });
 		if (!ecu) return { status: false };
 		const ecuKey = await this.ecuKeyRepository.findOne({ where: { ecuId } });
-		console.log("󱓞 ~ ECUService ~ revokeKey ~ ecuKey:", ecuKey)
+		console.log('󱓞 ~ ECUService ~ revokeKey ~ ecuKey:', ecuKey);
 		if (!ecuKey) return { status: false };
 		await this.ecuKeyRepository.delete({ where: { ecuId } });
 		return { status: true };
+	}
+
+	async exportKey(deviceId: string, ecuId: string) {
+		const ecu = await this.ecuRepository.findOne({ where: { id: ecuId, deviceId } });
+		if (!ecu) return { status: false };
+		const ecuKey = await this.ecuKeyRepository.findOne({ where: { ecuId } });
+		if (!ecuKey) return { status: false };
+		return { status: true, data: { privateKey: ecuKey.privateKey, publicKey: ecuKey.publicKey } };
 	}
 }
