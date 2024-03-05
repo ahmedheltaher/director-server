@@ -130,7 +130,7 @@ async function ECUApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiB
 }
 
 export async function DeviceApiBuilder(options: ApiBuilderInput): Promise<ApiBuilderOutput> {
-	const { services, hooks } = options;
+	const { services } = options;
 	const { deviceService } = services;
 	const ecuApis = await ECUApiBuilder(options);
 	const apis: ApiBuilderOutput = [
@@ -210,7 +210,7 @@ export async function DeviceApiBuilder(options: ApiBuilderInput): Promise<ApiBui
 				}
 				return { status: true, data: {} };
 			},
-		},
+		}
 	];
 
 	return [...apis, ...ecuApis];
